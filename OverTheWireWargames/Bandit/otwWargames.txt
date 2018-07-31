@@ -1,0 +1,129 @@
+WAR GAMES NOTES - BANDIT
+HostKey RSA:AAAAB3NzaC1yc2EAAAADAQABAAABAQDy5O/3KJT8z1aAC/hAuphG3gha/xVowSwc/066SVrSewHY4ETsCr3EdiClK+uw1OQYSBxHa6jPjEpKIeIMili5p6E4aEiiC3uYFkRCOQUN0bfYKgbHs5n1vEpua0UztLSf3AFGF2Lw2VEYd2Fuv1bPj2bYobpLTfLqjVhu8PWtQbgWBbECZBE7I7hSwvQzAnuaxJg/c2VtjD5vl3EOX6VlrnuDvYtM0q8dMrftBC9nTOzWc1RP8POVkcFdva+DETcQCeuG0rUPRZCzRpIhvxNf6BNkxeEHjkaIeedBPvDLdc9DLvdouzvw6H8EoU0pDJXsHraPWnuUEgwIAuD4auIP
+HostKey SHA256:AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBNjKNpXfKljXFVLM9p/6qZqUg8BzGs5wFFQWktFD5H9xXXcnH5yzQqtp7MpTPxBVk+1TRxmb0s5Ej3VewH5GK+E=
+HostKey ed25519:AAAAC3NzaC1lZDI1NTE5AAAAIBbK+bRnQZW9014ZUy5kubl5hwpgb+2r6Xsyx0xP018o
+LEVEL 0->1
+PASSWORD: boJ9jbbUNNfktd78OOpsqOltutMc3MY1
+
+LEVEL 1->2
+To open dashed File Name use:
+cat ./-
+PASSWORD: CV1DtqXWVFXTvM2F0k09SHz0YwRINYA9
+
+LEVEL 2->3
+Unix spaces in file names use single quote
+PASSWORD: UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK
+
+LEVEL 3->4
+PASSWORD: pIwrPrtPN36QITSp3EQaw936yaFoFgAB
+
+LEVEL 4->5
+PASSWORD: koReBOKuIDDepwhWk7jZC0RTdopnAYKh
+
+LEVEL 5->6
+find file of size
+find 1033c
+PASSWORD: DXjZPULLxYr17uwoI01bNLQbtFemEgo7
+
+LEVEL 6->7
+find -group <gname> -size <+-n>[bcwkMG] -user <uname>
+[b=512bytes, c=bytes, w=2bytes, k=kilobytes, M=megabytes, G=Gigabytes]
+HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs
+
+LEVEL 7->8
+grep millionth data.txt
+Password:cvX2JJa4CFALtqS87jk27qwqGhBM9plV
+
+LEVEL 8-?9
+uniq --unique    find uniqe text line
+PASSWORD: UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
+
+LEVEL-9-10
+FIND text in binary file
+strings <file> |grep <Text>
+PASSWORD: truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+
+LEVEL 10->11
+base64 -d <file>   decode Base64 encoding file
+Password: IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR
+
+LEVEL 11-12
+tr '[a-z]' '[n-za-l]'    rotate charaters ceaser cipher
+tr '[a-z]' '[n-za-l]' | tr '[A-Z]' '[N-ZA-L]'
+for rotation of upper and lower best use separate tr commands
+Password: 5Te8Y4drgCRfCx8ugdwuEX8KFC6k2EUu
+
+LEVEL 12-13
+data .txt hexdump of file which has been compressed multiple times
+--step 1--
+xxd -r <file>  reverse
+xxd -r > data
+file command to inspect data
+file data	its a gzip file. gzip files must have .gz extension. change the extion if not .gz
+--step 2 ---
+gzip -d data.gz		decompress file. or use gunzip
+file command on resulting file. its a bzip2. need change extention to bz
+--step 3---
+bzip2 -d data.bz	
+file command on resulting fle. its gzip
+--step 4--
+gzip -d data.gz
+file command on resulting file its a POSIX tar archive
+--Step 5 ---
+tar command to extract archive
+tar --extract -f <data>
+Subsequent steps repeated the above in various combinations
+Password: 8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
+
+LEVEL 13-14
+SSH to be used to log into level 14-15 located at /etc/bandit_pass/bandit14
+not accessible by bandit13.
+bandit 13 has private key for bandit14
+Copy private key to my pc and put in folder and rename to id_rsa  ~/.ssh/id_rsa
+log in to bandit14 ... can now access bandit14 password
+password:4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+
+Level 14-15
+echo the level13-14 password to port 30000 on localhost using netcat
+echo "password" | nc localhost 300000
+password: BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+LEVEL 15-16
+Echo the level 14-15 password over the ssl connectioon to localhost:30001
+use the quiet switch
+echo BfMYroe26WYalil77FoDi9qh59eK5xNr | openssl s_client -connect localhost:30001 -quiet
+Password: cluFn7wTiGryunymYOu4RcffSxQluehd
+
+LEVEL 16-17
+Use nmap to find ssl port in range using service scanning
+nmap -sV -p 31000-32000
+got back plain text "please enter the correct key"
+echo <previous password> | openssl s_client -connect localhost:31790
+Correct
+Password: {rsa private key}
+
+Level 17-18
+difference between files
+diff <file>1 <file2>
+file 1 is shown first
+Password: kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
+
+LEVEL 18-19
+~/.bashrc was modified causing ssh to logout
+ssh start an interactive terminal.
+ssh 'command' is a non-interactive terminal and issues command before logout
+ssh bandit18@bandit.labs.overthewire.org 'cat ~/readme'
+Password: IueksS7Ubh8G3DCwVzrTd8rAVOwq3M5x
+
+LEVEL 19-20
+run the program supplied gving the arguments as the program you want to run
+./bandit20-do cat /etc/bandit_pass/bandit20
+Password: GbKksEFF4yrVs6il55v6gwY5aVje5f0j
+
+LEVEL 20-21
+Need to make two connections to bandit.
+open the first connection with port forwarding enabled
+ssh -l bandit0 -p 2220 -L 1234:localhost:22 bandit.labs.overthewire.org
+the second connections is made to local host on the forwarded port 1234
+ssh -p 1234 bandit20@localhost
+Password: gE269g2h3mw3pwgrj0Ha9Uoqen1c9DGr
