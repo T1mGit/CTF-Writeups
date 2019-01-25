@@ -1,7 +1,7 @@
 <h2>grep 1</h2>
 <i>find the flag in the file</i>
 <br>
-<br>grep the flag<b>grep pico ./file</b>
+<br>grep the flag <b>grep pico ./file</b>
 <br><b>picoCTF{grep_and_you_will_find_d66382d8}</b>
 
 <h2> String</h2>
@@ -9,7 +9,7 @@
 <br>
 <br>pipe the output of the 'strings' comman into 'grep' command to quickly search for the flag. <b>strings <FILEPATH> | grep pico</b>
 <br>recommend using the 'mv' to change the name of the downloaded file from "strings" to avoid confusion with the 'strings' command.
-<br><b>picoCTF{sTrIngS_sAVeS_Time_2fbe2166}<b>
+<br><b>picoCTF{sTrIngS_sAVeS_Time_2fbe2166}</b>
 
 <h2> Grep 2</h2>
 <i>find the flag at the specified location</i>
