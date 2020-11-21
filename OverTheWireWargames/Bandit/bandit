@@ -1,0 +1,479 @@
+++++++++++++++++++++++++++
+Hello
+This file containes the complete up todate walkthrough as of 20 Nov 2020 for the bandit level problems on overthewire.org
+
+'==level ##' identifies the level
+lines starting with '**' indicate the problem description as provided by overthewire.org
+
+'--{Analysis}---' introduces the start of my analysis of the problem
+
+'>>' indicates what to type at the command prompt
+++++++++++++++++++++++++++
+SUMMARY OF LEARNINGS
+1. Concatenate with 'cat' command basics.
+2. Obscure filenames: period '.' hyphen '-'
+2a.	The hyphen is tricky. use ./- to refer to it.
+3. File type info with 'file' command and wild cards '*'
+4. The 'find' command to locate files based on various metadata properties
+5. The 'grep' command to search for strings in files with sophisticated pattern matching
+6. The 'sort' command for sorting lines of text
+7. the 'uniq' command for finding unique lines or excluding them
+8. The 'strings' command is very good at find human readable strings in arbitrary files
+9. the 'base64' to encode and decode base64 strings
+10. The 'tr' translate command which rotates, translates, and expands text. very good for rot-n ciphers
+11. file compression with 'zip', 'gunzip' , 'bzip2' 'bunzip2' 'tar'
+12. SSH Remote shell and command execution 'ssh'
+13. netcat 'nc' shovels data across a network
+14. Task scheduling with 'cron'
+15. Write your very first bash script
+16. The VI text editor. Awsome command interface that I haven't yet bothered to learn, except that you can launch a shell from it.
+16a.  Actually I have a great book "The Linux Command Line" which talk quite alot about VI, so I really should learn it.
+17. Start OpenSSL with 'openssl s_client'
+18. How use git. 'git log' 'git tag' 'git add' 'git commit' 'git push' 'git branch'
+19. Shell Expansion Characters
++++++++++++++++++++++++++++++++
+
+==level 0-1==
+**The password is in the readme file
+
+>>cat readme
+boJ9jbbUNNfktd78OOpsqOltutMc3MY1
+
+==level 1-2
+**the password in in file name '-'
+>>cat ./-
+CV1DtqXWVFXTvM2F0k09SHz0YwRINYA9
+
+==level 2-3
+**password is in file call "spaces in this filename"
+>>cat spaces\ in\ this\ filename
+UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK
+
+==level3-4
+**password is in a hidden file the directory "inhere".
+
+--{Analysis}---
+hidden files are preceded by a period.
+>>cat inhere/.hidden
+pIwrPrtPN36QITSp3EQaw936yaFoFgAB
+
+==level 4-5
+**the password is in the only human-readable file in the "inhere" directory
+
+--{Analysis}---
+In this instance the directory contained 10 sequntially numbered files.
+the file command with a wild card will list all files and the type of data
+
+>>file inhere/-file0*
+
+-file07 is the only one containng ASCII text
+
+koReBOKuIDDepwhWk7jZC0RTdopnAYKh
+
+==level 5-6
+**the file is stored somehwere in the 'inhere' directory and has the properties:
+**human-readable, 1033 bytes, non-executable
+
+--{Analysis}---
+use find -size 1033c to find based on size
+
+>>find inhere/ -size 1033c
+
+DXjZPULLxYr17uwoI01bNLQbtFemEgo7
+
+===level 6-7
+**the file is somewhere on the server. it is owned by user bandit7 and group bandit 6 and is 33 bytes
+
+--{Analysis}---
+Read the man page of the find command
+
+>> file / -user bandit7 -group bandit6 -size 33c
+>> cat /var/lib/dpkg/info/bandit7.password
+HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs
+
+==level 7-8
+** the password is next to the word "millionth" in data.txt
+
+--{Analysis}---
+grep finds all matches, there is only one occurance of millionth
+
+>>grep millionth data.txt
+cvX2JJa4CFALtqS87jk27qwqGhBM9plV
+
+==level 8-9
+**the password is stored in data.txt on the only line occuring once
+
+--{Analysis}---
+sort the lines in the file alphbettically and filter for only uniq lines
+
+>> sort data.txt |  uniq -u
+UsvVyFSfZZWbi6wgC7dAFyFuR6jQQUhR
+
+==level 9-10
+**the password is in data.txt and preceded by several '='
+
+--{Analysis}---
+the clue is we can grep for lines of strings with several '='
+
+>> strings data.txt | grep ===
+truKLdjsbJ5g7yyJ2X2R0o3a5HQJFuLk
+
+==level 10-11
+**the password is in data.txt encoded in base64
+
+--{Analysis}---
+decode base 64
+
+>>base64 -d data.txt
+IFukwKGsFW8MOq3IRFqrxE1hxTNEbUPR
+
+==level 11-12
+**data.txt contains the password but the upper and lower letter are rotated 13 characters (ceaser cipher/rot13)
+
+--{Analysis}---
+the tr command will translate input from one set to another set
+
+>>cat data.txt | tr [A-Za-z] [N-ZA-Mn-za-m]
+5Te8Y4drgCRfCx8ugdwuEX8KFC6k2EUu
+
+==level 12-13
+**the file has been repeatedly compressed with a combination of gzip, bzip2 and tar
+
+--{Analysis}---
+keep uncompressing until you reach data8 which is ASCII text password.
+use the file command to determine which compression method to use
+
+>>file data
+>>gunzip data.gz
+>>bunzip2 data.bz2
+>>tar --list -f data
+>>tar --extract -f data data.bin
+8ZjyCRiBWFYkneahHwxCv3wb2a1ORpYL
+
+==level 13-14
+--{Analysis}---
+This level gives you a private key log into level 14
+copy the key to your system and change permission to read only.
+log into level 14 using the ssh identity
+>>ssh -p 2220 -i [private_key_file] bandit14@bandit.lab.overthewire.org
+
+==level 14-15
+**submit the password for the current level (14) to port 30000 on local host to get the next password.
+
+--{Analysis}---
+Level 13 told us the location of the level 14 password.
+we need to connect to the port and sent the password
+read the man page for ncat or nc
+>> cat /etc/bandit_pass/bandit14
+4wcYUJFw0k0XLShlDzztnTBHiqxU3b3e
+
+>>nc localhost 30000
+
+[press enter to start connection, type or paste the level 14 password, press enter]
+level 15 password is returned.
+BfMYroe26WYalil77FoDi9qh59eK5xNr
+
+==level 15-16
+**submit the current level password to port 30001 on local host using SSL encryption
+
+--{Analysis}---
+use the s_client command to connect with ssl encryption
+
+>>openssl s_client -connect localhost:30001
+
+type/paste the level 15 password and press enter to get the level 16 password
+cluFn7wTiGryunymYOu4RcffSxQluehd
+
+==level 16-17
+**submit the current password to the only SSL port in the range 31000 to 32000
+
+--{Analysis}---
+Read man page for nmap port scanner
+use nmap to service detection to find the ssl port, limit to the port range too
+then use the the openssl s_client as before.
+nmap takes a while so wait this one out. 
+Curiously port 31790 could not be identied by Nmap, although the returned data said "Wrong! Please enter the correct current password"
+Big Hint, port 31790 must be correct. 
+
+>>nmap -sV -p31000-32000 localhost
+>>openssl s_client -connect localhost:
+it returned an ssh private key
+
+==level 17-18
+**the password is in the passwords.new file and is the only line changed from passwords.old
+
+--{Analysis}---
+use diff command
+
+>>diff -f passwords.old passwords.new
+kfBf3eYk5BPBRzwjqutbbfE887SVc5Yd
+
+==level18-19
+**the password is stored in a file "readme" in the home directory
+
+--{Analysis}---
+ssh logs out immediatly, however ssh allow a command to be appended which is executed on login.
+
+>>ssh -p 2220 bandit18@bandit.labs.overthewire.org cat readme
+IueksS7Ubh8G3DCwVzrTd8rAVOwq3M5x
+
+==level 19-20
+**use the setuid binary (bandit20-do) to gain access to the bandit20 password
+
+--{Analysis}---
+using the 'id' or 'whoami' tells you your user is bandit19. the 'bandit20-so' binary allows you to execute a command as user bandit20
+
+>>./bandit20-do cat /etc/bandit_pass/bandit20
+GbKksEFF4yrVs6il55v6gwY5aVje5f0j
+
+==level 20-21
+**the binary in the home directory connects to localhost on a port you specify and reads a line of text comparing it to the previous level password
+
+--{Analysis}---
+you to need make a second ssh connection to bandit20 in order to setup netcat to listen for a connection and then pipe the text.
+--Window 1--
+>>echo GbKksEFF4yrVs6il55v6gwY5aVje5f0j | nc -l -p 1989 localhost
+--Window 2--
+>>./suconnect 1989
+the next level password is: gE269g2h3mw3pwgrj0Ha9Uoqen1c9DGr
+
+==level 21-22
+**a program is running at regular intervals from cron look in /etc/cron.d for the configuration to see what the command is
+
+--{Analysis}---
+looking at the configuration you can see the command is /usr/bin/cronjob_bandit22.sh
+opening this script reveals the script is writing the bandit22 password into a file whos name is t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv in the tmp directory
+
+>>cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+Yk7owGAcWjwMVRwrTesJEwB7WVOiILLI
+
+==level 22-23
+**a program running automaically, check the cron conifugration
+
+--{Analysis}---
+same as previous level, open the bandit23 cron config to get the script name, its in the same place as previous level /usr/bin/cronjob_bandit23.sh.
+examining the script shows that its getting the md5 hash  of the current user name and using it as the file name in which the password in stored.
+you need to modify the script or copy the action so it get the bandit23 file rather than bandit22.
+you will be able to save a modified version in the /tmp/ directory
+
+>>cat /usr/bin/cronjob_bandit23.sh > /tmp/myscript.sh
+
+edit the script with a text editor like nano and change it so it produces the md5sum of "bandit23".
+you can use the script to print the password too!
+
+jc1udXuA1tiHqjIsL8yaapX5XIAI6i0n
+
+==Level 23-24
+--{Analysis}---
+just like the previous level you need to examine the script /usr/bin/cronjob_bandit24.sh
+the script will normally be executed by cron as user bandit24.
+when running as user bandit24 it will execute all scripts located in /var/spool/bandit24 then delete them unless the owner is bandit23.
+we need to get our script (as user bandit23) into the bandit24 folder, but we have write but not read access.
+The password we want is stored in /etc/bandit_pass/bandit24 so our script has to print this out and save in the tmp directory.
+
+>>echo "cat /etc/bandit_pass/bandit2 > /tmp/mypass" > /var/spool/bandit24/myscript.sh
+>>chmod +x /var/spool/bandit24/myscript.sh
+>>cat /tmp/mypass
+UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ
+
+==level 24-25
+**a deamon is listenin on port 30002 and will give you the password for bandit25 if you give it the password for bandit24 and a secret 4 digit pincode. You need to brute force the pincode.
+
+--{Analysis}---
+you could write a sccript to do this or pregenerate a file with all combination 1 per line and use netcat to transmit the file
+--pregenerate file--
+>>for (( i=0 ; i<=10000 ; i++ )); do echo "UoMYTrfrBFHyQXmg6gzctqAwOmw1IohZ $i" >> /tmp/pins done
+--transmit--
+>>nc localhost 30002 < /tmp/pins
+uNG9O58gUE7snukf3bvZ0rxhtnjzSGzG
+
+==level25-26
+the ssh key to log into level 25-26 is given to to you.
+
+==level26-27
+**level 26 doesnt use /bin/bash what is it how do you break it.
+
+--{Analysis}---
+checking passwd shows that bandit26 uses /usr/bin/showtext as the shell
+trying to run this runs the program "more" but it doesnt work as it is.
+using the file command reveals that showtext is just a shelscript which uses "sh" shell to execute the "more" program.
+finnaly exit, which close the shell connection
+-----------------
+#!/bin/sh
+
+export TERM=linux
+
+more ~/text.txt
+exit 0
+------------------
+
+/////////////////
+investigate the man page of the more program:
+'more' is a filter for paging through text ONE SCREEN AT A TIME.
+...
+...
+...
+Interactive commands are based on 'vi'. (the text editor).
+...
+...
+commands:
+  v  Start up an editor at current line
+////////////////
+
+If you've been attentive, notice that this level the last lines of output display a fancy "bandit26" logo and then the connection closed.
+The previous levels did not display the bandit26 logo.
+In the script the 'more' is causing ~/text.txt to be shown after you login.
+Then the exit command runs causing you to logout.
+
+Try using 'more' with a very large text file to see what it is supposed to do.
+It is supposed to page through the text.
+Why is not not paging through ~/text.txt? It is. But its less than one page.
+'more' is displaying the one page before quitting, then the exit command runs logging you out.
+
+To stop 'more' from quitting we have to make it show more than one page.
+How is this done if the text cannot be changed? The page must be made smaller!
+Shrink the size of your terminal very small. 'more' will stop quiting and wait for you to page through.
+
+Read the 'more' man page to find out the commands.
+Read the 'vi' man page to find out how to use 'vi' in particular all the commands in the quick reference manual.
+
+back in 'more' type v to start the 'vi' editor.
+having read the thoroughly vi manual you will know that typing ':' to launch the command window.
+you will also will have found the command :shell which starts a system command shell.
+However it is a limited shell and you would prefer to start a bash shell.
+shell can be changed with :set shell=/bin/bash
+then start shell with :shell
+
+Now we have a normal shell and are able to execute the bandit27-do program.
+
+3ba3118a22e93127a4ed485be72ef5ea
+
+
+==level 27-28
+**There is a git repository at ssh://bandit27-git@localhost/home/bandit27-git/repo. The password for the user bandit27-git is the same as for the user bandit27.
+
+--{Analysis}---
+Read documentatio on git to find out how to clone a git repositry.
+Note that you need to specify the ssh port 2220
+Once you have cloned the repo, youl find the password
+
+0ef186ac70e04ea33b4c1853d2526fa2
+
+===level 28-29
+**There is a git repository at ssh://bandit28-git@localhost/home/bandit28-git/repo. The password for the user bandit28-git is the same as for the user bandit28.
+
+--{Analysis}---
+This problem was a bit obscure at it requires that you understand what git is and what it does.
+
+When you clone the repository you find the following file. Obviously the wrong password.
+You need to understand that git keeps a record of all the changes which have happened to a file including branches. It allows you to go backwards in the history of a file and work on an earlier version.
+You need to read the git documentation to find out which commands allow you to view the earlier versions of the file.
+of particular interest are: 'git log', 'git revert', and 'git checkout'
+--------
+# Bandit Notes
+Some notes for level29 of bandit.
+
+## credentials
+
+- username: bandit29
+- password: xxxxxxxxxx
+----------
+
+bbc96594b4e001778eee9975372716b2
+
+==level 29-30
+--{Analysis}---
+Same as previous but no passwords in the master branch.
+you need to understand how git allows multiple branches in a repo to be tracked.
+how do you list all the available branches? investigate 'git branch'
+How do you change branches? Investigate 'git checkout'
+
+>>get checkout dev
+>>less README
+
+5b90576bedb2cc04c86a9e924ce42faf
+
+===level 30-31
+--{Analysis}---
+Same as before but now this is only one branch and no passwords.
+git logs; git note; git branch; git show;
+nothing useful here
+This one you need to understand git tags.
+
+>>git tag
+secret
+
+how to see that secret. 
+
+>>git checkout secret
+fatal: reference is not a tree
+
+all the docs said that tags point to a place in the repo tree or project history.
+took me a while to understand that this error was saying the reference was invalid.
+The fact that it is an invalid reference is another clue.
+Another useful command 'git show' shows various object types'
+
+>>git show secret
+47e603bb428404d265f59c42920d81e5
+
+==level 31-32
+--{Analysis}---
+like before clone the repo. but now you have to push a file back.
+open the readme to find the details of the requried file.
+create the file and use the git commands to add, commit, and push.
+you will need to read about git ignore files or simply use the -f to force add.
+
+56a9bf19c63d650ce78e6ec0354ee45e
+
+==level 32-33==
+**After all this git stuff its time for another escape. Good luck!
+
+WELCOME TO THE UPPERCASE SHELL
+
+--{Analysis}---
+The problem is that all lower case commands get converted to upper case.
+so lets try to used non alpha characters then they wont get converted
+
+---
+info on sh
+---
+[shell parameters]
+	$	introduces parameter expansion as in $# or ${expression}
+	*	expands to positional paramters. (if double-quoted will be a single field delimieted by spaces
+	@	expands to positional parameter. (if double-quoted expands as separate arguments
+	#	the number of positional parameters
+	?	most recent exit status
+	-	option flags
+	$	process id of the shell
+	!	process id of background command
+	0	expands to name of shell
+
+Could try all of these or do this:
+notice that the output of invalid commands somthing like the folloiwng
+
+>> help
+sh: 1: HELP: not found
+
+the 'sh' is the  clue that this is a sh (dash) shell.
+info above comes from man page of 'sh'
+the 'sh' is lower case.
+from the info above we see that $0 expands to the name of the terminal.
+if we type
+
+>>$0
+
+it expands to 
+
+>>sh
+
+and launches a new normal sh shell for us.
+now our commands work. hoooray.
+
+c9c3199ddf4121b10cf581a98d51caee
+
+==Level 33-34==
+Not available yet
+
+==================
+As of Nov21,2020 This completes the Bandit level problems
+==================
