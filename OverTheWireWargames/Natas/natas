@@ -1,0 +1,66 @@
+This is the walkthrough for the Over the Wire - Natas levls
+
+The login for the very first level is:
+URL - http://natas0.natas.labs.overthewire.org
+username : natas0
+password : natas0
+
+The Natas levels have a <div id=content> section which contains the actual challenge content.
+The other div and header sections are unrelated to the challenge (at least in the low levels!!)
+
+
++++{ LEVEL 0 }+++
+1) The password is found by opening the html inspector developer panel.
+RMB > inspect element (F12 works in firefox)
+The password is written in a comment in the html seen by expanding the html.
+
+username: natas1
+password:gtVrDuiDfck831PqWsLEZy5gyDz1clto
+
++++{ LEVEL 1 }+++
+1) The solution is the same as level 0 but right button click is disabled.
+F12 still works, or use menu
+
+username:natas2
+password:ZluruAthQk7Q2MqmDeTiUij2ZvWy2mBi
+
++++{ LEVEL 2 }+++
+1)Open the source html browser and you'll notice a strange 1 pixel image the source of which is "files/pixel"
+2)This indicates there is a directory named "files". Type this in the URL.
+3) URL - http://natas2.natas.labs.overthewire.org/files - you'll discover the file "users.txt"
+4) The password for natas3 is in "users.txt"
+
+password: sJIJNW6ucpu6HPZ1ZAchaDtwd7oGrD14
+
++++{ LEVEL 3 }+++
+1) Often web server use a file named "robots.txt" intended to stop web crawlers from indexing certain directories.
+robots.txt is usually located at the root ie. /robots.txt
+2) go to /robots.txt it lists a directory "Disallow:/s3cr3t/" go to the /s3cr3t/ directory.
+3) there is another "users.txt" in that directory containing the password.
+
+password:Z9tkRkWmpt9Qr7XrR5jWRkgOU901swEZ
+
+
++++{ LEVEL 4 }+++
+1) Click the link to refresh the page a couple of times, you'll the following message:
+[
+ Access disallowed. You are visiting from "http://natas4.natas.labs.overthewire.org/"
+ while authorized users should come only from "http://natas5.natas.labs.overthewire.org/"
+]
+2)This challeng requires a tool called "Burpsuit" or similar.
+3)It is necessary to intercept the http request from the browser before it leaves our computer.
+4)We need change the 'Referer Header' which is sent in the GET request.
+5)The Refer Header contains the URL of the website we have come from. We have to change it to exactly the URL the challenge is asking for.
+6)Change the referer header EXACTLY inlcude trailing slash and we get password
+
+password: iX6IOfmpN7AYOQGPwtn3fXpbaJVJcHfq
+
++++{ LEVEL 5}+++
+1) This time the challenge says:
+[
+ Access denied. You are not logged in.
+]
+2) Again with burpsuite intercept proxy - we discover a cookie with a field "loggedin=0"
+3) change the value to "loggedin=1" and forward the request to get the password.
+
+password: aGoY4q2Dc6MgDq4oL4YtoKtyAg9PeHa1
