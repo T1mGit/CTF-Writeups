@@ -64,3 +64,48 @@ password: iX6IOfmpN7AYOQGPwtn3fXpbaJVJcHfq
 3) change the value to "loggedin=1" and forward the request to get the password.
 
 password: aGoY4q2Dc6MgDq4oL4YtoKtyAg9PeHa1
+
++++{ LEVEL 6 }+++
+1) The challenge asks for some text input into a single field form submission.
+It is supposed to be the secret code to access the next level password.
+2) The server side code is provided to you.
+3) Examine the server side code and see the line :
+
+    include "includes/secret.inc";
+
+4) The 'include' directive causes the code on the specified file to be included in the php script.
+You should NOT be able to navigate to this directory - this is a directory traversal flaw.
+5) Navigate to the included file: /includes/secret.inc" and look in the source explorer window to find the comment telling your the secret code that goes in the input field.
+
+password: 7z3hEENjQtflzgnT29q7wAvMNfZdh0i9
+
++++{LEVEL 7}+++
+1)This seems to be another directory traversal. Check the source inspector for coments. There is a hint telling you where the password is
+2)If you try just navigating to the file via putting it in url: /natas_webpass/natas8
+It does not work - file is not found.
+3) Notice click the hyperlinks 'home' and 'about' changes url to a page parameter.
+index.pgp?page=home -or- page=about
+4)instead try page=/etc/natas_webpass/natas8
+5)it dumps the password
+
+password: DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe
+
++++{LEVEL 8}+++
+1)Another form input. The server side is provided and gives you the encoded secret and the function which encodes
+2)It is simple using php to do the reverse (decode) function.
+3) Server side does this:
+
+  $encodedSecret = "3d3d516343746d4d6d6c315669563362";
+
+  function encodeSecret($secret) {
+      return bin2hex(strrev(base64_encode($secret)));
+  }
+
+4) You need to do the reveres. PHP can be called from command line:
+
+  php -r '$e=base64_decode(strrev(hex2bin("3d3d516343746d4d6d6c315669563362")),true); print $e;'
+
+5) The above command will print the secret value for you: 'oubWYf2kBq'
+   You need to type in to the form to get the password.
+
+password: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
