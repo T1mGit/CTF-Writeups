@@ -109,3 +109,84 @@ password: DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe
    You need to type in to the form to get the password.
 
 password: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
+
++++{ LEVEL 9 }+++
+1)Examine the hint code. This problem suggests that its a needle in a haystack.
+2)Actually it is a command execution flaw.
+3)The user input goes unverified in the grep command allowing grep across arcross arbitrary files.
+4)Also putting a star in the input will grep for all files in the current directory and dumps the hint code.
+5)We alread know the password is located at /etc/natas_webpass/natas10 and we know the kind what the password looks like
+6)We only need a single character to match grep to print the output.
+7)We can try every individual letter until one matches, or we we can use a regular expression.
+
+  -E [a-zA-Z] /etc/natas_webpass/natas10
+
+8) -E [a-zA-Z] is the regular exprerssion
+9) because we know the form of the password it wont require many guesses to match, so a regular expression is not essential
+
+  password: nOpp1igQAkUzaI1GUUjzn1bFVj7xCNzu
+
++++{ LEVEL 10}+++
+1)This is basically the same as LEVEL 9 but include the PHP preg_match which seems to be filtering for charters we might use in a regular expression
+2)Very noticably does not filter slashes or underscore so solution fom LEVEL 9 minus the regex still works.
+
+  U /etc/natas_webpass/natas11
+
+3)Arbitrarily select single characters to grep for
+
+  password: U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK
+
+
++++{ LEVEL 11 }+++
+1)this problem uses xor to encrypt the cookie and there is no feed back or chaining.
+2)the flaw is the use of XOR which operates byte for byte, and is reversible.
+3)Given the ciphertext and the plain text the two can be XORed to produce the key.
+4)We can use a php script to perform the XOR.
+
+<?php
+function get_key($plain, $crypt)
+{ 
+ $key=""; 
+ print("Cleartext Length:".strlen($plain));
+ print("\nCiphertext Length:".strlen($crypt));
+ for($i=0;$i<strlen($plain);$i++){
+   $key.=$plain[$i]^$crypt[$i];
+  }
+ return $key;
+} 
+$default_data=array("showpassword"=>"no", "bgcolor"=>"#ffffff");
+$encoded="ClVLIh4ASCsCBE8lAxMacFMZV2hdVVotEhhUJQNVAmhSEV4sFxFeaAw%3D";
+$j=json_encode($default_data);  
+$x=base64_decode($encoded);
+print("\nKey=".get_key($j,$x));
+?>
+
+5) Here is the output from the script
+
+Cleartext Length:41
+Ciphertext Length:42
+Key=qw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jq
+
+6)because the characters repeat it means the key is shorter than the plaintext
+7)The key is: qw8J
+8)We write another script to create the cookie with the injected data.
+
+<?php
+$data=json_encode(array("showpassword"=>"yes", "bgcolor"=>"#ffffff"));
+$key="qw8J";   
+$cookie=""; 
+for($i=0;$i<strlen($data);$i++){
+  $cookie.=$data[$i]^$key[$i%strlen($key)];
+} 
+print(base64_encode($cookie));
+?>
+
+9) The output of this script:
+
+ClVLIh4ASCsCBE8lAxMacFMOXTlTWxooFhRXJh4FGnBTVF4sFxFeLFMK
+
+10) this value must replace that which the server sent us.
+11) the cooking can be accessed and re-written in the webbrowser (firefox) in the storage tab of the dev-tools
+12) finally use the webform again, our new cookie will be sent back to the server and we get the password.
+
+password: EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
