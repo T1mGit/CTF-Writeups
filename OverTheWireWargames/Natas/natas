@@ -190,3 +190,57 @@ ClVLIh4ASCsCBE8lAxMacFMOXTlTWxooFhRXJh4FGnBTVF4sFxFeLFMK
 12) finally use the webform again, our new cookie will be sent back to the server and we get the password.
 
 password: EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
+
+
++++{ LEVEL 12 }+++
+1) This problem wants us to upload a small size image.
+2) however it does not check that an images was uploaded, or that the file was valid.
+3) The uploaded file gets displayed as a hyperlink to the file.
+4) clicking on the hyperlink the browser will try to request and load the file, just like an html file
+5) The following issues can be exploited:
+ a> The file extention is taken directly from a hidden field on client side and used in the hyperlink displayed to the user. We can change it from jpg to php.
+ b> the upladed file not sanitized - we can upload a php script that will dump the password.
+ c> the php script will be executed when we click on the hyperlink to the uploaded file that is displayed to us. 
+6) PHP script is as follows:
+ 
+ <html>
+ <?
+ $p=passthru("cat /etc/natas_webpass/natas13");
+ echo $p;
+ ?>
+ </html>
+
+7) Change the filename in the hidden form to have a PHP extension.
+8) Upload a PHP file containing the PHP script above.
+9) click the hyper link.
+
+ Password: jmLTY0qiPZBbaKc9341cqPQZBJv7MQbY
+
++++{ LEVEL 13 }+++
+1) The analyis of this level is exactly  the same as the previous with the addition of a magic number check
+2) Most files have a signature set of bytes at the start of the file to identify them.
+   The exif_imagetype function used on this level check the file signature.
+3) We only need to insert an image file signture such as JFIF infront of our script used on the previos level.
+4) Wikipedia the jfif file signature. Open our previous script in a Raw Hex editor and insert the signature at the start.
+5) One valid Signature is FF D8 FF E0 00 10 4A 46 49 46 00 01
+6) Upload the file and change the extension as done in level 12
+
+Password: Lg96M10TdfaPyVBkJdjymbllQ5L6qdl1
+
+
++++{ LEVEL 14 }+++
+1) This level is a basic SQL injection vulnerability
+2) We have the following query string
+
+   $query = "SELECT * from users where username=\"".$_REQUEST["username"]."\" and password=\"".$_REQUEST["password"]."\"";
+
+3) User input goes directly into query with no sanitization.
+4) SQL will return result when the conditions in the query evaluate to TRUE
+5) because of (3) we can enter an additional SQL condition which always evaluate to TRUE
+6) in the password box we type the following:
+ 
+   " OR 1=1 #
+
+7) quote closes the first quote in the query expression, hash is comment symbol and discards the actual closing quote, OR 1=1 is always true
+
+Password:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
