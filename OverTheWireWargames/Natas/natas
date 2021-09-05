@@ -244,3 +244,55 @@ Password: Lg96M10TdfaPyVBkJdjymbllQ5L6qdl1
 7) quote closes the first quote in the query expression, hash is comment symbol and discards the actual closing quote, OR 1=1 is always true
 
 Password:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
+
++++{ LEVEL 15}+++
+1) This level has 'debug' output which can be triggered sending 'debug' as a url parameter in a get request
+2) In the source inspector change the form action to GET
+3) Type in the URL bar not the input box. The SQL query which is executed will be displayed.
+   This is not the query itself, just the string which will be sent as query.
+4) The following URL string result in:
+
+   natas15.natas.labs.overthewire.org/index.php?username=natas16&debug=1
+   SELECT * from users where username="natas16"
+
+5) The PHP line is:
+
+   $query = "SELECT * from users where username=\"".$_REQUEST["username"]."\"";
+
+6)This level is not actualy returning the data from the database, only that the data exists
+7)we might be able to modify the debug string to create new sql query.
+
+  a) natas15.natas.labs.overthewire.org/index.php?username=1" OR "1" -- &debug=1
+  b) natas15.natas.labs.overthewire.org/index.php?username=1" OR "1"\"";// -- &debug=1
+  c) http://natas15.natas.labs.overthewire.org/index.php?username="natas16" AND STRCMP("w",password)<0 -- &debug
+
+8) above a) and b) demonstrate vulnerability to SQL injection however it doesn't give us much
+9) I needed a hint from a friend here. Above c) uses the mysql function STRCMP(string1,string2)
+
+   string1<string2 : STRCMP=-1
+   string1=string2 : STRCMP=0
+   string1>string2 : STRCMP=1
+
+10) the expression STRCMP(string1,string2)<0 will evaluate to true if string1 is less than string2.
+11) We can use c) in a script to repeatedly send a query.
+12) Using a distance halving algorithm to search through an ordered (by char code) array of alphanum characters we can build the password 1 byte at a time.
+13) Finall when you have found the full password check it give the expected result
+ 
+    STRCMP(mypass,password)<0
+    STRCMP(mypass,password)=0
+    STRCMP(mypass,password)>0
+14) The second test should be the only one that returns true and will result in the server saying "This user exists". The others will give you "This user doesn't exist"
+15) Keep in mind you must use the full 32 character password for this test.
+16) You can also use the alternative query:
+
+    http://natas15.natas.labs.overthewire.org/index.php?username=natas16%22%20AND%20password=%22waiheacj63wnnibroheqi3p9t0m5nhmh%22%20--%20&debug=1
+
+17) Oh Dear, Swapping Lowercase for uppercase also give the same result provided the numbers are not changed
+18) Investigating - Apparently MySQL STRCMP() is case insensitive.
+19) If like me you're not the MySQL Guru - My Friend advised the Fix is easy with keyword BINARY
+
+    STRCMP(BINARY string1,string2)
+
+20) NOTE:my script seemed to find the last letter as 'g' instead of the correct letter 'h'
+
+    Password:WaIHEacj63wnNIBROHeqi3p9t0m5nhmh
