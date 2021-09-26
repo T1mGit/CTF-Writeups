@@ -129,10 +129,11 @@ password: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
 +++{ LEVEL 10}+++
 1)This is basically the same as LEVEL 9 but include the PHP preg_match which seems to be filtering for charters we might use in a regular expression
 2)Very noticably does not filter slashes or underscore so solution fom LEVEL 9 minus the regex still works.
+3)Also important, quotes are not being filtered and, the input going to grep is not inside quotes
 
   U /etc/natas_webpass/natas11
 
-3)Arbitrarily select single characters to grep for
+4)Arbitrarily select single characters to grep for
 
   password: U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK
 
@@ -296,3 +297,35 @@ Password:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
 20) NOTE:my script seemed to find the last letter as 'g' instead of the correct letter 'h'
 
     Password:WaIHEacj63wnNIBROHeqi3p9t0m5nhmh
+
++++{ LEVEL 16 }+++
+
+1) Similar to level 9 and 10 but with difference
+2) quotes are being filtered and the input going to grep is inside quotes making the search term literal string
+3) forward slash is not being filtered, neither is star or period or underscore
+
+http://natas16.natas.labs.overthewire.org/?needle={text}
+
+if($key != "") {
+    if(preg_match('/[;|&`\'"]/',$key)) {
+        print "Input contains an illegal character!";
+    } else {
+        passthru("grep -i \"$key\" dictionary.txt");
+    }
+}
+
+4) It is possible to modify the grep command with command substitution: $()
+   and regex word match ^ and $ being start and end of the word
+ 
+	--no-ignore-case ^$(cut -b2 /etc/natas_webpass/natas17)$
+
+5) Loop through each byte of the password by increasing -b2, -b3, -b4, etc
+6) The server will interpret the following command
+
+	grep -i "--no-ignore-case $(cut -b1 /etc/natas_webpass/natas)" dictionary.txt
+
+7)There is a problem. This command only finds letters and is most reliable for the singular capital letter in the dictionary.
+  It cannot identify numbers and cannot distinguish upper case from lower case
+  The user input is inside quotes which nullify the --no-ignore-case that we might have used for grep
+  Redirection < could be uses to pass the file to the 'tr [0-9] [A-J]' command but a second command like cut is needed to get the individual letters.
+  Further more the | and ; is filtered - leaving only commnd substittion.
