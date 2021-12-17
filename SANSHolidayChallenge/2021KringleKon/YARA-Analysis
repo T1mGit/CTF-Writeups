@@ -48,3 +48,6 @@ strings:
 Condition:
 	uint32(1) ==0x02464c45 and filesize<50KB and 10 of them
 
+STEP4
+There are three Yara rules to bypass. 
+Bypass these successfuly to complete this challenge
