@@ -1,0 +1,50 @@
+===YARA Analysis===
+Location: to the left of the entry foyer of santas workshop
+Elf: Fitzy Shortstack
+
+--{Description}--
+The Critical Elf Application is not working because the Yara virus scan blocks it.
+Please help Fitzy - He tells you that changing inocuous part of the program can bypass the scanner
+
+--{Research}--
+https://yara.readthedocs.io/en/stable/writingrules.html
+
+--{Solution}--
+Run the "Critical Elf Application", it prints the Yara rule that halt the program.
+You cannot edit the Yara Rules but you can examine the in the a text editor (eg nano).
+You are able to use the 'xxd' program to hex dump the application binary and edit the hexdump in the text editor.
+the 'xxd' program will also reverse a hexdump into the binary executable.
+
+STEP 1
+Delete "candycane" from the binary
+
+strings:
+	$s=candycane
+condition:
+	$s
+
+STEP2
+Both of these hex strings must exists to activate the rule. 
+The 'Libc.so' must stay but the other can be deleted.
+
+strings:
+	$s=6c 6962 632e 736f 2e36 - (Libc.so)
+	$s=726f 6772 616d 2121 - (rogram!!)
+
+condition:
+	all of them
+STEP 3
+The strings are not important because there are only 5 anomalous strings that could be candidates for deletion.
+Hence the condition '10 of them' will be satisfied by the remaining strings.
+The easiest way is to increase the filesize above 50Kb by adding zeroes and occasional one.
+
+strings: 
+	$s=This is critical for the execution of this program!!
+	$s=naughty string
+	$=dastardly string
+	$s=its_a_holly_jolly_variable
+	$s=HolidayHackChallenge{NotReallyAFlag}
+	(There are actually 20 strings, not all are shown)
+Condition:
+	uint32(1) ==0x02464c45 and filesize<50KB and 10 of them
+

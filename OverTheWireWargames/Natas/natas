@@ -329,3 +329,10 @@ if($key != "") {
   The user input is inside quotes which nullify the --no-ignore-case that we might have used for grep
   Redirection < could be uses to pass the file to the 'tr [0-9] [A-J]' command but a second command like cut is needed to get the individual letters.
   Further more the | and ; is filtered - leaving only commnd substittion.
+
+8) Potential solution is: cut -b1 <(tr [0-9] [A-J] < /etc/natas_webpass/natas17)
+   This may allow number s to be translated to letter for searching the dictionary - however still upper/lower case issue
+   make sure no space between < and (. Together the ( and ) represent a temporary file
+
+Curent solution:   
+__PS_H_GWBN__D_S_GmaDG_NDKHPK__CW
