@@ -1,0 +1,11 @@
+==Exif Metadata==
+Location: Courtyard
+Elf: Piny Sappington
+Description: 
+Straigt forward, metadata has been changed in ONE of the documents provided and you have to find wich one.
+
+Solution:
+the 'exiftool' program is provided.
+Dump exif data from all documents into a text file and look for anomalies.
+the "last modified by" field should be Santa, except one is 'jack Frost'
+This is the modifed file. Give the file name as answer

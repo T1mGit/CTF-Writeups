@@ -1,0 +1,17 @@
+==LTrace==
+Location: Kitchen
+Elf: Tinsel Upatree
+Description:
+The program "make_the_candy" is missing a configuration file.
+You need to recreate a configuration file.
+You are provided with the "ltrace" tool
+
+The ltrace tool prints the line of code where the program halts.
+You can iterative recreate the file by observing the ltrace error and making the file in such a way that the error doesn't occur.
+ltrace firstly tells you it cant find the registration file "Registration.json"
+Then after making blankfile it will give an error "unregistered"
+
+We need to make a json file that is registered.
+Solution: echo -n "Registration:True"
+
+
