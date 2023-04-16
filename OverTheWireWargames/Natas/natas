@@ -15,14 +15,14 @@ RMB > inspect element (F12 works in firefox)
 The password is written in a comment in the html seen by expanding the html.
 
 username: natas1
-password:gtVrDuiDfck831PqWsLEZy5gyDz1clto
+password:g9D9cREhslqBKtcA2uocGHPfMZVzeFK6
 
 +++{ LEVEL 1 }+++
 1) The solution is the same as level 0 but right button click is disabled.
 F12 still works, or use menu
 
 username:natas2
-password:ZluruAthQk7Q2MqmDeTiUij2ZvWy2mBi
+password:h4ubbcXrWqsTo7GGnnUMLppXbOogfBZ7
 
 +++{ LEVEL 2 }+++
 1)Open the source html browser and you'll notice a strange 1 pixel image the source of which is "files/pixel"
@@ -30,7 +30,7 @@ password:ZluruAthQk7Q2MqmDeTiUij2ZvWy2mBi
 3) URL - http://natas2.natas.labs.overthewire.org/files - you'll discover the file "users.txt"
 4) The password for natas3 is in "users.txt"
 
-password: sJIJNW6ucpu6HPZ1ZAchaDtwd7oGrD14
+password: G6ctbMJ5Nb4cbFwhpMPSvxGHhQ7I6W8Q
 
 +++{ LEVEL 3 }+++
 1) Often web server use a file named "robots.txt" intended to stop web crawlers from indexing certain directories.
@@ -38,7 +38,7 @@ robots.txt is usually located at the root ie. /robots.txt
 2) go to /robots.txt it lists a directory "Disallow:/s3cr3t/" go to the /s3cr3t/ directory.
 3) there is another "users.txt" in that directory containing the password.
 
-password:Z9tkRkWmpt9Qr7XrR5jWRkgOU901swEZ
+password:tKOcJIbzM4lTs8hbCmzn5Zr4434fGZQm
 
 
 +++{ LEVEL 4 }+++
@@ -53,7 +53,7 @@ password:Z9tkRkWmpt9Qr7XrR5jWRkgOU901swEZ
 5)The Refer Header contains the URL of the website we have come from. We have to change it to exactly the URL the challenge is asking for.
 6)Change the referer header EXACTLY inlcude trailing slash and we get password
 
-password: iX6IOfmpN7AYOQGPwtn3fXpbaJVJcHfq
+password: Z0NsrtIkJoKALBCLi5eqFfcRN82Au2oD
 
 +++{ LEVEL 5}+++
 1) This time the challenge says:
@@ -63,7 +63,7 @@ password: iX6IOfmpN7AYOQGPwtn3fXpbaJVJcHfq
 2) Again with burpsuite intercept proxy - we discover a cookie with a field "loggedin=0"
 3) change the value to "loggedin=1" and forward the request to get the password.
 
-password: aGoY4q2Dc6MgDq4oL4YtoKtyAg9PeHa1
+password: fOIvE0MDtPTgRhqmmvvAOt2EfXR6uQgR
 
 +++{ LEVEL 6 }+++
 1) The challenge asks for some text input into a single field form submission.
@@ -77,7 +77,7 @@ It is supposed to be the secret code to access the next level password.
 You should NOT be able to navigate to this directory - this is a directory traversal flaw.
 5) Navigate to the included file: /includes/secret.inc" and look in the source explorer window to find the comment telling your the secret code that goes in the input field.
 
-password: 7z3hEENjQtflzgnT29q7wAvMNfZdh0i9
+password: jmxSiH3SP6Sonf8dv66ng8v1cIEdjXWr
 
 +++{LEVEL 7}+++
 1)This seems to be another directory traversal. Check the source inspector for coments. There is a hint telling you where the password is
@@ -88,7 +88,7 @@ index.pgp?page=home -or- page=about
 4)instead try page=/etc/natas_webpass/natas8
 5)it dumps the password
 
-password: DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe
+password: a6bZCNYwdKqN5cGP11ZdtPg0iImQQhAB
 
 +++{LEVEL 8}+++
 1)Another form input. The server side is provided and gives you the encoded secret and the function which encodes
@@ -108,12 +108,18 @@ password: DBfUBfqQG69KvJvJ1iAbMoIpwSNQ9bWe
 5) The above command will print the secret value for you: 'oubWYf2kBq'
    You need to type in to the form to get the password.
 
-password: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
+password: Sda6t0vkOPkM8YeOZkAGVhFoaplvlJFd
 
 +++{ LEVEL 9 }+++
 1)Examine the hint code. This problem suggests that its a needle in a haystack.
 2)Actually it is a command execution flaw.
 3)The user input goes unverified in the grep command allowing grep across arcross arbitrary files.
+ /** Server Side: **/
+
+     passthru("grep -i $key dictionary.txt");
+
+ /** Our input replaces '$key' in the expression on above - executed on the remote server **/
+
 4)Also putting a star in the input will grep for all files in the current directory and dumps the hint code.
 5)We alread know the password is located at /etc/natas_webpass/natas10 and we know the kind what the password looks like
 6)We only need a single character to match grep to print the output.
@@ -124,7 +130,7 @@ password: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
 8) -E [a-zA-Z] is the regular exprerssion
 9) because we know the form of the password it wont require many guesses to match, so a regular expression is not essential
 
-  password: nOpp1igQAkUzaI1GUUjzn1bFVj7xCNzu
+  password: D44EcsFkLxPIkAAKLosx8z3hxX1Z4MCE
 
 +++{ LEVEL 10}+++
 1)This is basically the same as LEVEL 9 but include the PHP preg_match which seems to be filtering for charters we might use in a regular expression
@@ -135,7 +141,7 @@ password: W0mMhUcRRnG8dcghE4qvk3JA9lGt8nDl
 
 4)Arbitrarily select single characters to grep for
 
-  password: U82q5TCMMQ9xuFoI3dYX61s7OZD9JKoK
+  password: 1KFqoJXi6hRaPluAmk8ESDW4fSysRoIg
 
 
 +++{ LEVEL 11 }+++
@@ -156,7 +162,7 @@ function get_key($plain, $crypt)
  return $key;
 } 
 $default_data=array("showpassword"=>"no", "bgcolor"=>"#ffffff");
-$encoded="ClVLIh4ASCsCBE8lAxMacFMZV2hdVVotEhhUJQNVAmhSEV4sFxFeaAw%3D";
+$encoded="MGw7JCQ5OC04PT8jOSpqdmkgJ25nbCorKCEkIzlscm5ofXt%2FeCgubjY";
 $j=json_encode($default_data);  
 $x=base64_decode($encoded);
 print("\nKey=".get_key($j,$x));
@@ -166,7 +172,7 @@ print("\nKey=".get_key($j,$x));
 
 Cleartext Length:41
 Ciphertext Length:42
-Key=qw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jqw8Jq
+Key=KNHLKNHLKNHLKNHLKNHLKNHLKNHLKNHLK
 
 6)because the characters repeat it means the key is shorter than the plaintext
 7)The key is: qw8J
@@ -184,13 +190,13 @@ print(base64_encode($cookie));
 
 9) The output of this script:
 
-ClVLIh4ASCsCBE8lAxMacFMOXTlTWxooFhRXJh4FGnBTVF4sFxFeLFMK
+MGw7JCQ5OC04PT8jOSpqdmk3LT9pYmouLC0nICQ8anZpbS4qLSguKmkz
 
 10) this value must replace that which the server sent us.
-11) the cooking can be accessed and re-written in the webbrowser (firefox) in the storage tab of the dev-tools
+11) the cookie can be accessed and re-written in the webbrowser (firefox) in the storage tab of the dev-tools
 12) finally use the webform again, our new cookie will be sent back to the server and we get the password.
 
-password: EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
+password: YWqo0pjpcXzSIl5NMAVxg12QxeC1w9QG
 
 
 +++{ LEVEL 12 }+++
@@ -215,7 +221,7 @@ password: EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
 8) Upload a PHP file containing the PHP script above.
 9) click the hyper link.
 
- Password: jmLTY0qiPZBbaKc9341cqPQZBJv7MQbY
+ Password: lW3jYRI02ZKDBb8VtQBU1f6eDRo6WEj9
 
 +++{ LEVEL 13 }+++
 1) The analyis of this level is exactly  the same as the previous with the addition of a magic number check
@@ -226,7 +232,7 @@ password: EDXp0pS26wLKHZy1rDBPUZk0RKfLGIR3
 5) One valid Signature is FF D8 FF E0 00 10 4A 46 49 46 00 01
 6) Upload the file and change the extension as done in level 12
 
-Password: Lg96M10TdfaPyVBkJdjymbllQ5L6qdl1
+Password: qPazSJBmrmU7UQJv17MHk1PGC4DxZMEP
 
 
 +++{ LEVEL 14 }+++
@@ -244,7 +250,7 @@ Password: Lg96M10TdfaPyVBkJdjymbllQ5L6qdl1
 
 7) quote closes the first quote in the query expression, hash is comment symbol and discards the actual closing quote, OR 1=1 is always true
 
-Password:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
+Password: TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB
 
 +++{ LEVEL 15}+++
 1) This level has 'debug' output which can be triggered sending 'debug' as a url parameter in a get request
@@ -276,7 +282,7 @@ Password:AwWj0w5cvxrZiONgZ9J5stNVkmxdk39J
 
 10) the expression STRCMP(string1,string2)<0 will evaluate to true if string1 is less than string2.
 11) We can use c) in a script to repeatedly send a query.
-12) Using a distance halving algorithm to search through an ordered (by char code) array of alphanum characters we can build the password 1 byte at a time.
+12) Using a distance halving algorithm to search through an ordered (by char code) array of alphanum characters we can build the password 1 byte at a time.0
 13) Finall when you have found the full password check it give the expected result
  
     STRCMP(mypass,password)<0

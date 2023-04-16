@@ -10,7 +10,7 @@ function get_key($plain, $crypt)
  return $key;
 }
 $default_data=array("showpassword"=>"no", "bgcolor"=>"#ffffff");
-$encoded="ClVLIh4ASCsCBE8lAxMacFMZV2hdVVotEhhUJQNVAmhSEV4sFxFeaAw%3D";
+$encoded="MGw7JCQ5OC04PT8jOSpqdmkgJ25nbCorKCEkIzlscm5ofXt%2FeCgubjY";
 $j=json_encode($default_data);
 $x=base64_decode($encoded);
 print("\nKey=".get_key($j,$x));
