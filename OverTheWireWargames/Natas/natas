@@ -282,8 +282,8 @@ Password: TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB
 
 10) the expression STRCMP(string1,string2)<0 will evaluate to true if string1 is less than string2.
 11) We can use c) in a script to repeatedly send a query.
-12) Using a distance halving algorithm to search through an ordered (by char code) array of alphanum characters we can build the password 1 byte at a time.0
-13) Finall when you have found the full password check it give the expected result
+12) Using a distance halving algorithm to search through an ordered (by char code) array of alphanum characters we can build the password 1 byte at a time.
+13) Finally when you have found the full password (32chars) check it give the expected result
  
     STRCMP(mypass,password)<0
     STRCMP(mypass,password)=0
@@ -292,7 +292,7 @@ Password: TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB
 15) Keep in mind you must use the full 32 character password for this test.
 16) You can also use the alternative query:
 
-    http://natas15.natas.labs.overthewire.org/index.php?username=natas16%22%20AND%20password=%22waiheacj63wnnibroheqi3p9t0m5nhmh%22%20--%20&debug=1
+    http://natas15.natas.labs.overthewire.org/index.php?username=natas16%22%20AND%20password=%22TRD7iZrd5gATjj9PkPEuaOlfEjHqj32V%22%20--%20&debug=1
 
 17) Oh Dear, Swapping Lowercase for uppercase also give the same result provided the numbers are not changed
 18) Investigating - Apparently MySQL STRCMP() is case insensitive.
@@ -300,9 +300,12 @@ Password: TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB
 
     STRCMP(BINARY string1,string2)
 
-20) NOTE:my script seemed to find the last letter as 'g' instead of the correct letter 'h'
+20) NOTE:Due to the condition checking only <0, the last character we find is likely to be One(1) below the correct character. i.e. 'U' instead of 'V', or 'b' instead of 'c'
+21) NOTE:I modified the script to use the python urllib library which I found is more reliable than raw sockets, However making too many requests, the server boots you off. Bit of flaw, but you can start with a partial password and continue until you have 32 chars.
+22) NOTE:You must be exact about whether letters are upper or lower case, otherwise this script fails.
+    The tell, if you have wrong char, is when script always finds last letter of array 'z'
 
-    Password:WaIHEacj63wnNIBROHeqi3p9t0m5nhmh
+    Password:TRD7iZrd5gATjj9PkPEuaOlfEjHqj32V
 
 +++{ LEVEL 16 }+++
 
