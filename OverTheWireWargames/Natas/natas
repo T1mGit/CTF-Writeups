@@ -310,8 +310,7 @@ Password: TTkaI7AWG4iDERztBcEyKV7kRXH1EZRB
 +++{ LEVEL 16 }+++
 
 1) Similar to level 9 and 10 but with difference
-2) quotes are being filtered and the input going to grep is inside quotes making the search term literal string
-3) forward slash is not being filtered, neither is star or period or underscore
+2) Quotes are being filtered and the input going to grep is inside quotes making the search term literal string - except for '$', '`', and '\', and '!' if history expansion is enabled.
 
 http://natas16.natas.labs.overthewire.org/?needle={text}
 
@@ -323,25 +322,38 @@ if($key != "") {
     }
 }
 
-4) It is possible to modify the grep command with command substitution: $()
-   and regex word match ^ and $ being start and end of the word
- 
-	--no-ignore-case ^$(cut -b2 /etc/natas_webpass/natas17)$
+3) The following characters do not get filtered: / * . _ ^ $ ( ) [ ]
+4) The following types of searches are possible:
+4.1) '^' and '$' match the start and end of a word
+4.2) [A-Z] character class matching
+4.3) '.' single character matching with period.
+5) We put the characters ^.$ in the box and discover the following list of single letters with no opposite case:
 
-5) Loop through each byte of the password by increasing -b2, -b3, -b4, etc
-6) The server will interpret the following command
+	B C D E F G H I K N O P S T U V W Y a m
 
-	grep -i "--no-ignore-case $(cut -b1 /etc/natas_webpass/natas)" dictionary.txt
+6)Other observations: 
+6.1) Interesting search terms: ^D$ ; ^[A-Z][A-Z][A-Z]$
+7) All digits 0-9 exist text equivalen e.g. one,two,three etc.
+8) command substitution: $(); NOTE: Redirection <() doesn't seem to work as expected
+9) Loop and increase the '-b' paramter: ^$(cut -b2 /etc/natas_webpass/natas17)$
+9.1) E.G.  -b2, -b3, -b4, etc
+9.2) The server will interpret: grep -i "$(cut -b1 /etc/natas_webpass/natas)" dictionary.txt
 
-7)There is a problem. This command only finds letters and is most reliable for the singular capital letter in the dictionary.
-  It cannot identify numbers and cannot distinguish upper case from lower case
-  The user input is inside quotes which nullify the --no-ignore-case that we might have used for grep
-  Redirection < could be uses to pass the file to the 'tr [0-9] [A-J]' command but a second command like cut is needed to get the individual letters.
-  Further more the | and ; is filtered - leaving only commnd substittion.
+10)Better solution:
+11) A better way: The True/false approach used in the previous level, this time a different indicator of true/false to indicate a letter exists or not.
+12) Return value of grep are: 0 - no error, match is returned. 1 - No error, empty match is rerturn. 2 - Error
+13) Download (copy paste) the diction for offline analysis and discover the word 'Mrs' has unique letter combination. i.e. grep "Mrs" returns a single result.
+14) Therefore any letter or number which we append from the password file to the word 'Mrs' will not be found in the dictionary and grep will return empty match.
+15) If we nest grep using command substitution:
 
-8) Potential solution is: cut -b1 <(tr [0-9] [A-J] < /etc/natas_webpass/natas17)
-   This may allow number s to be translated to letter for searching the dictionary - however still upper/lower case issue
-   make sure no space between < and (. Together the ( and ) represent a temporary file
+	grep -i "$(grep D /etc/natas_webpass/natas17)Mrs" dictionary.txt
 
-Curent solution:   
-__PS_H_GWBN__D_S_GmaDG_NDKHPK__CW
+16) If the inside grep matches the password letters the command substitution will prepend/append 'Mrs' to become 'DMrs' - which does not exist.
+17) If the inside grep does not match password letter the substitution is empty and the result is 'Mrs' which the outside grep will locate
+18) Consequently we write a script with nested grep and if we get no result from the query we have a correct letter.
+16) Build up the password one letter at a time like with did in the previous level
+
+17) Solution is working until the 25th letter; after the 25th, our search characters are being exhausted.
+18) Probably means the incorrect match is being recorded. 
+
+	password: 0SbnKBvH1RU7ksIb9uuLmI7sd_______

