@@ -346,14 +346,14 @@ if($key != "") {
 14) Therefore any letter or number which we append from the password file to the word 'Mrs' will not be found in the dictionary and grep will return empty match.
 15) If we nest grep using command substitution:
 
-	grep -i "$(grep D /etc/natas_webpass/natas17)Mrs" dictionary.txt
+	grep -i "$(grep ^D /etc/natas_webpass/natas17)Mrs" dictionary.txt
 
 16) If the inside grep matches the password letters the command substitution will prepend/append 'Mrs' to become 'DMrs' - which does not exist.
 17) If the inside grep does not match password letter the substitution is empty and the result is 'Mrs' which the outside grep will locate
 18) Consequently we write a script with nested grep and if we get no result from the query we have a correct letter.
 16) Build up the password one letter at a time like with did in the previous level
 
-17) Solution is working until the 25th letter; after the 25th, our search characters are being exhausted.
-18) Probably means the incorrect match is being recorded. 
+17) NOTE: the carrot '^' is required at the start of the search to anchor search to beginning of word, otherwise grep will return a match from anywhere in the word.
+18) If you forget the ^ you might find the last N characters in stead of the first, the loop will continue and find nothing for the remainder.
 
-	password: 0SbnKBvH1RU7ksIb9uuLmI7sd_______
+	password: XkEuChE0SbnKBvH1RU7ksIb9uuLmI7sd

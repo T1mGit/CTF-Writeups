@@ -29,7 +29,7 @@ buf=bytearray()
 
 pwd=""
 #pwd="0SbnKBvH1RU7ksIb9uuLmI7sd"
-for c in range(1,32):
+for c in range(0,32):
 	found=False
 	for n in chars:
 		#setup the http request
