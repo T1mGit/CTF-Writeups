@@ -357,3 +357,39 @@ if($key != "") {
 18) If you forget the ^ you might find the last N characters in stead of the first, the loop will continue and find nothing for the remainder.
 
 	password: XkEuChE0SbnKBvH1RU7ksIb9uuLmI7sd
+
+---{Level 17}---
+1) Level 17 is nearly identical to level 15 but it does not print the output saying whether a user exists.
+2) The solution in this case is the same as level 15 with the addition of the the sql SLEEP(n) seconds
+
+	SELECT * from users where username="natas18" AND STRCMP(BINARY "mypass",password)<0 AND SLEEP(10) -- "
+
+3) If guess 'mypass' is less than 'password' then STRCMP()<0 is True and response will take N seconds due to the SLEEP(n).
+4) If guess 'mypass' is greater than 'password' the STRCMP()<0 is False and response is only 1-2 seconds.
+5) In SLEEP(n), n need to be long enough to distinguish from no sleep e.g. 10 second. but not so long to hold up the server.
+6) The script we used to level 15 needs to be modified to measure the response time.
+7) python: import time, t=time.time() gives us seconds since epoch. Measure the time before and after sending query to get difference.
+
+	Password:8NEDUUxg8kFgPV84uLwvZkGn6okJQ6aq
+
+---{Level 18}---
+1) We have to provide admin credentials to login.
+2) The server sends us a cookie PHPSESSID with a random value
+3) Currently we are just a user. To become the admin, we have to set the value of the session variable $_SESSION["admin"] equal to 1
+4) The session variable is stored on the server and is populated from a file linked to a session ID.
+5) As a client we do not have access to the $_SESSION variable so we cannot directly act on it.
+6) The PHPSESSID is used to store the session id on the client in a cookie file. This cookie is editable on the client side.
+7) When the browser sends the cookie with the session ID back to the server, the server looks up the session ID to find its own file which populates the $_SESSION variable.
+8) This means we have to send a session ID that correspond to the data file on the server which holds the admin credentials.
+9) From the supplied server code we know there are only 640 user ID's one of which is the admin session.
+10) The solution is to continually request and modify the PHPSESSID value to increment each time, until we hit on the admin session id
+11) This solution can be implemented manually via the browser dev tool, or by writing a script, or 'Burp Suit' is very simple to use in this regard.
+
+12) NOTE: The key 'admin' in the $_SESSION["admin"] needs to exists which is done by putting the URL paramter username=admin
+
+13) NOTE: Its also worth pointing out that 'session_id()' function gets the current session, or creates a new session if supplies with an argument.
+   if the ID of an existing session is supplied as argument, the session will get overwritten. 
+14) On the server code there appears to be a possibility of overwriting the admin session due to the use of 'rand(1,$maxid)' in the 'createID()' function. It would then be immediately set to 0 by the 'isValidAdminLogin()' function, then again in the 'my_session_start()' function.
+
+	Password: 8LMJEhKFbMKIL2mxQKjv0aEDdk7zpT0s
+
