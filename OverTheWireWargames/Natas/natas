@@ -393,3 +393,17 @@ if($key != "") {
 
 	Password: 8LMJEhKFbMKIL2mxQKjv0aEDdk7zpT0s
 
+---{Level 19}---
+1) This level is same has level 18 using a different ID
+2) The PHPSESSID in the cookie is a hex number which converts to following examples
+
+	3431342d61646d696e  414-admin
+	3435372d61646d696e  457-admin
+	3334342d61646d696e  344-admin
+	3631352d61646d696e  615-admin
+
+3) Assuming the code is the same as level 18 per instruction, then admin session will be a number between 1 and 640
+4) we can do the same method as level 19 but convert the session number to hex as in above example.
+5) Using Burp - Numerical sequence 3 digits wide the preprocess payload by append with '-admin' and encode to ascii hex
+
+	Password: guVaZ3ET35LbgbFMoaN5tFcYT1jEP7UH
